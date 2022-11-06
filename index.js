@@ -1,5 +1,3 @@
-#!/ust/bin/env node
-
 'use strict';
 
 const path = require('path');
@@ -12,13 +10,13 @@ const ITEM_TYPE = {
 
 /**
  *
- * @param {string} folderPath - folder to be analysed, default is current
- * @param {srting[]} ext - filter file extensions, default any
+ * @param {string} dir - folder to be analysed, default is the current ./
+ * @param {srting[]} ext - file extensions to be included into the map, default all 
  * @returns
  */
-async function folderStructureMap(folderPath = './', ext = []) {
+async function folderStructureMap(dir = './', ext = []) {
   const filesPathMap = [];
-  if (typeof folderPath !== 'string' || !folderPath) {
+  if (typeof dir !== 'string' || !dir) {
     console.error('Invalid path');
     return filesPathMap;
   }
@@ -28,7 +26,9 @@ async function folderStructureMap(folderPath = './', ext = []) {
   if (ext.length) {
     extensionsString = ext
       .map((extension) => {
-        return extension.startsWith('.') ? `${extension}` : `.${extension}`;
+        const ext = extension.trim();
+
+        return ext.startsWith('.') ? `${ext}` : `.${ext}`;
       })
       .join('|');
   }
@@ -36,15 +36,15 @@ async function folderStructureMap(folderPath = './', ext = []) {
   const alloweExtenstionsRegex = new RegExp(extensionsString, 'ig');
 
   try {
-    const content = await readdir(folderPath);
+    const content = await readdir(dir);
 
     for (const item of content) {
-      const itemPath = path.resolve(folderPath, item);
+      const itemPath = path.resolve(dir, item);
       const itemStats = await stat(itemPath);
 
       const itemMap = {
         type: ITEM_TYPE.file,
-        parent: folderPath,
+        parent: dir,
         itemPath,
         name: item,
         innerItems: [],
