@@ -13,20 +13,20 @@ const ITEM_TYPE = {
 /**
  *
  * @param {string} folderPath - folder to be analysed, default is current
- * @param {srting[]} extensions - allowed file extensions, default any
+ * @param {srting[]} ext - filter file extensions, default any
  * @returns
  */
-async function folderStructureMap(folderPath = './', extensions = []) {
+async function folderStructureMap(folderPath = './', ext = []) {
   const filesPathMap = [];
   if (typeof folderPath !== 'string' || !folderPath) {
     console.error('Invalid path');
     return filesPathMap;
   }
 
-  let extensionsString = '\w'; //
+  let extensionsString = '.\\w+'; //
 
-  if (extensions.length) {
-    extensionsString = extensions
+  if (ext.length) {
+    extensionsString = ext
       .map((extension) => {
         return extension.startsWith('.') ? `${extension}` : `.${extension}`;
       })
@@ -60,8 +60,7 @@ async function folderStructureMap(folderPath = './', extensions = []) {
       }
 
       if (
-        itemStats.isFile() &&
-        alloweExtenstionsRegex.test(path.extname(item))
+        itemStats.isFile() && alloweExtenstionsRegex.test(path.extname(item))
       ) {
         filesPathMap.push(itemMap);
       }

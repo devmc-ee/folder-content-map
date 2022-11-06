@@ -1,0 +1,30 @@
+{
+  "name": "@devmcee/folder-content-map",
+  "version": "1.0.0",
+  "description": "Generates folder content map",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node generate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devmc-ee/folder-content-map.git"
+  },
+  "keywords": [
+    "ls",
+    "files"
+  ],
+  "author": "devmcee",
+  "license": "ISC",
+  "bin": {
+    "folder-content-map": "generate.js"
+  },
+  "bugs": {
+    "url": "https://github.com/devmc-ee/folder-content-map/issues"
+  },
+  "homepage": "https://github.com/devmc-ee/folder-content-map#readme",
+  "dependencies": {
+    "yargs": "^17.6.2"
+  }
+}
