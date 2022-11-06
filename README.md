@@ -1,6 +1,6 @@
 # folder-content-map
 
-Recursibvly scan folder and generate a map of the inner items. 
+Recursivly scan folder and generate a map of the inner items. 
 
 Install
 
