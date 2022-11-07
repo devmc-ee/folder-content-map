@@ -4,36 +4,33 @@ const path = require('path');
 const { readdir, stat } = require('fs/promises');
 
 const ITEM_TYPE = {
-    file: 'file',
-    directory: 'directory',
-  };
+  file: 'file',
+  directory: 'directory',
+};
 
 /**
  *
- * @param {string} dir - folder to be analysed, default is the current ./
- * @param {srting[]} ext - file extensions to be included into the map, default all 
+ * @param {string} dir - folder to be analysed, default .
+ * @param {srting[]} extensions - allowed file extensions to be included into the map, default []
  * @returns
  */
-async function folderStructureMap(dir = './', ext = []) {
-  const filesPathMap = [];
+async function folderStructure(dir = '.', extensions = []) {
   if (typeof dir !== 'string' || !dir) {
     console.error('Invalid path');
     return filesPathMap;
   }
 
-  let extensionsString = '.\\w+'; //
+  return parseFolder(dir, extensions.map((ext) => ext.trim().startsWith('.') ? ext.trim(): `.${ext.trim()}`));
+}
 
-  if (ext.length) {
-    extensionsString = ext
-      .map((extension) => {
-        const ext = extension.trim();
-
-        return ext.startsWith('.') ? `${ext}` : `.${ext}`;
-      })
-      .join('|');
-  }
-
-  const alloweExtenstionsRegex = new RegExp(extensionsString, 'ig');
+/**
+ *
+ * @param {string} dir - folder to be analysed, default .
+ * @param {srting[]} extensions - file extensions to be included into the map, default all
+ * @returns
+ */
+async function parseFolder(dir = '.', allowedExtensions = []) {
+  const filesPathMap = [];
 
   try {
     const content = await readdir(dir);
@@ -41,17 +38,25 @@ async function folderStructureMap(dir = './', ext = []) {
     for (const item of content) {
       const itemPath = path.resolve(dir, item);
       const itemStats = await stat(itemPath);
+      const isFile = itemStats.isFile();
+      const isDirectory = itemStats.isDirectory();
 
       const itemMap = {
         type: ITEM_TYPE.file,
         parent: dir,
-        itemPath,
+        path: itemPath,
         name: item,
         innerItems: [],
       };
 
-      if (itemStats.isDirectory()) {
-        const innerFilesMap = await folderStructureMap(itemPath);
+      if (isDirectory) {
+        let innerFilesMap = {};
+
+        try {
+          innerFilesMap = await parseFolder(itemPath, allowedExtensions);
+        } catch (error) {
+          console.log(error);
+        }
 
         itemMap.innerItems = innerFilesMap;
         itemMap.type = ITEM_TYPE.directory;
@@ -59,9 +64,9 @@ async function folderStructureMap(dir = './', ext = []) {
         filesPathMap.push(itemMap);
       }
 
-      if (
-        itemStats.isFile() && alloweExtenstionsRegex.test(path.extname(item))
-      ) {
+      const extension = path.extname(item);
+      
+      if ( isFile && (!allowedExtensions.length || allowedExtensions.includes(extension))) {
         filesPathMap.push(itemMap);
       }
     }
@@ -72,4 +77,4 @@ async function folderStructureMap(dir = './', ext = []) {
   return filesPathMap;
 }
 
-module.exports = { folderStructureMap };
+module.exports = { folderStructure };
