@@ -1,6 +1,5 @@
 # folder-content-map
-
-Recursivly scan folder and generate a map of the inner items. 
+Scans folder recursivly and generates a map of the inner items. 
 
 Install
 
@@ -18,7 +17,7 @@ console.log(structure)
 
 ```
 
-Sample data output:
+Example data output:
 ```
 [
   {

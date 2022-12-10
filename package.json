@@ -1,6 +1,6 @@
 {
   "name": "@devmcee/folder-content-map",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Generates folder content map",
   "main": "index.js",
   "scripts": {
